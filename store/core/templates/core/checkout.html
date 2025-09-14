@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %} Checkout  {% endblock %}
+
+{% block main %}
+    <div class="container py-5">
+        <div class="row g-5">
+
+            <!-- Left: Checkout Form -->
+            <div class="col-lg-7">
+                <h4 class="mb-4">Shipping Information</h4>
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <form method="post">
+                            {% csrf_token %}
+
+                            <!-- Address Field -->
+                            <div class="mb-4">
+                                <label for="id_address" class="form-label fw-semibold">
+                                    Address:
+                                </label>
+
+                                <!-- ✅ Explicit textarea tag -->
+                                <textarea
+                                        name="address"
+                                        id="id_address"
+                                        class="form-control {% if form.address.errors %}is-invalid{% endif %}"
+                                        rows="4"
+                                        placeholder="123 Main Street, City, State, ZIP, Country"
+                                >{{ form.address.value|default:request.user.address }}</textarea>
+
+                                {% if form.address.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.address.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                <div class="form-text text-muted">
+                                    {{ form.address.help_text }}
+                                </div>
+                            </div>
+
+                            <!-- Description Field -->
+                            <div class="mb-4">
+                                <label for="id_description" class="form-label fw-semibold">
+                                    Description:
+                                </label>
+
+                                <!-- ✅ Explicit textarea tag -->
+                                <textarea
+                                        name="description"
+                                        id="id_description"
+                                        class="form-control {% if form.description.errors %}is-invalid{% endif %}"
+                                        rows="3"
+                                        placeholder="Any special instructions? (e.g. gift wrap, deliver after 5 PM)"
+                                >{{ form.description.value|default:"" }}</textarea>
+
+                                {% if form.description.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.description.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                <div class="form-text text-muted">
+                                    {{ form.description.help_text }}
+                                </div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="fas fa-shopping-cart me-2"></i>Proceed to Payment
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Order Summary -->
+            <div class="col-lg-5">
+                <h4 class="mb-4">Order Summary</h4>
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        {% if cart_items %}
+                            <ul class="list-group list-group-flush mb-3">
+                                {% for item in cart_items %}
+                                    <li class="list-group-item px-0 py-3 border-0 d-flex align-items-center">
+                                        <div class="ms-3 flex-grow-1">
+                                            <h6 class="mb-1 fw-normal">{{ item.product.name }}</h6>
+                                            <small class="text-muted">Qty: {{ item.count }} ×
+                                                ${{ item.price|floatformat:2 }}</small>
+                                            {% if item.discount > 0 %}
+                                                <br>
+                                                <span class="badge bg-warning text-dark rounded-pill mt-1">-{{ item.discount }}%</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-end">
+                                            <small class="d-block text-success fw-bold">
+                                                ${{ item.total|floatformat:2 }}
+                                            </small>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                            <hr>
+
+                            <!-- Price Breakdown -->
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal</span>
+                                <span>${{ subtotal|floatformat:2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Discount</span>
+                                <span class="text-danger">-${{ discount_total|floatformat:2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>VAT ({{ vat_rate }}%)</span>
+                                <span>+${{ vat_amount|floatformat:2 }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between fs-5 fw-bold border-top pt-3 text-success">
+                                <span>Total</span>
+                                <span>${{ total|floatformat:2 }}</span>
+                            </div>
+                        {% else %}
+                            <p class="text-muted">Your cart is empty.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Security Badge -->
+                <div class="text-center mt-4">
+                    <small class="text-muted">
+                        <i class="fas fa-lock me-1"></i>
+                        Secure payment powered by <strong>ZarinPal</strong>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

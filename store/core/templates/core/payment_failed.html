@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %} Payment Failed {% endblock %}
+
+{% block main %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg border-danger">
+                    <div class="card-header bg-danger text-white text-center">
+                        <h3><i class="bi bi-exclamation-triangle-fill"></i> Payment Failed</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor"
+                                 class="text-danger" viewBox="0 0 16 16">
+                                <path d="M8 16A8 8 0 1 1 8 0a8 8 0 0 1 0 16zM8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14z"/>
+                                <path d="M8 4a.9.9 0 0 1 .9.9v3.2a.9.9 0 0 1-.9.9A.9.9 0 0 1 7.1 8.1V4.9A.9.9 0 0 1 8 4zm0 8a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-danger">Oops! Payment Was Not Completed</h4>
+                        <p class="text-muted">{{ reason }}</p>
+
+                        <div class="alert alert-warning mt-4" role="alert">
+                            <i class="bi bi-lightbulb"></i>
+                            Please try again or contact support if the issue persists.
+                        </div>
+
+                        <div class="mt-4">
+                            <a href="javascript:history.back()" class="btn btn-warning me-2">Try Again</a>
+                            <a href="#" class="btn btn-outline-secondary">Contact Support</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

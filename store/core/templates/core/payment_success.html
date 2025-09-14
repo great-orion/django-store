@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %} Payment Successful {% endblock %}
+
+{% block main %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card shadow-lg border-success">
+                    <div class="card-header bg-success text-white text-center">
+                        <h3><i class="bi bi-check-circle-fill"></i> Payment Successful</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="currentColor"
+                                 class="text-success" viewBox="0 0 16 16">
+                                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+                            </svg>
+                        </div>
+                        <h4 class="text-success">Thank You for Your Purchase!</h4>
+                        <p class="text-muted">Your payment has been processed successfully.</p>
+
+                        <ul class="list-unstyled mt-4">
+                            <li><strong>Reference ID:</strong> {{ ref_id }}</li>
+                            <li><strong>Amount Paid:</strong> {{ amount }} $</li>
+                        </ul>
+
+                        <div class="mt-4">
+                            <a href="/" class="btn btn-outline-primary me-2">Home</a>
+                            <a href="#" class="btn btn-success">View
+                                Invoice</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

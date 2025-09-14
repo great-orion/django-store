@@ -1,0 +1,27 @@
+Virtual environment
+djangoclass_venv/
+.venv/
+
+Byte-compiled / optimized /
+
+generated files
+pycache/
+__pycache__/
+*.py[cod]
+
+Django specific
+*.log
+*.sqlite3
+.env
+/media/
+
+IDE files
+.vscode/
+.idea/
+.idea
+*.swp
+*.swo
+
+Common OS-specific files
+.DS_Store
+Thumbs.db

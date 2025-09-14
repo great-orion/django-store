@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Signup mail</title>
+</head>
+<body>
+    Hello, {{ user.first_name }}! <br>
+    please click on link below to activate your account:<br>
+    <p>
+    <a href="{{ activation_link }}" style="display: inline-block; padding: 10px 20px; background: #007BFF; color: white; text-decoration: none; border-radius: 5px;">
+      Confirm Email
+    </a>
+  </p>
+
+  <p><small>If you didn’t sign up, ignore this email.</small></p>
+</body>
+</html>

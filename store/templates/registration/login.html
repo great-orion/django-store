@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %} Login {% endblock %}
+
+{% block main %}
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h3 class="card-title text-center mb-4">Welcome Back</h3>
+                        <p class="text-center text-muted mb-4">Please log in to your account</p>
+
+                        <form method="post" class="needs-validation" novalidate>
+                            {% csrf_token %}
+
+                            <!-- Username -->
+                            <div class="mb-3">
+                                {{ form.username.label_tag }}
+                                <input
+                                        type="text"
+                                        name="{{ form.username.html_name }}"
+                                        value="{{ form.username.value|default:'' }}"
+                                        class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                                        placeholder="Enter your username"
+                                        required
+                                >
+                                {% if form.username.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.username.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Password -->
+                            <div class="mb-3">
+                                {{ form.password.label_tag }}
+                                <input
+                                        type="password"
+                                        name="{{ form.password.html_name }}"
+                                        class="form-control {% if form.password.errors %}is-invalid{% endif %}"
+                                        placeholder="Enter your password"
+                                        required
+                                >
+                                {% if form.password.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {% for error in form.password.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Remember Me (Optional) -->
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                                <label class="form-check-label" for="remember">Remember me</label>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary btn-lg">Log In</button>
+                            </div>
+
+                            <!-- Forgot Password & Sign Up Link -->
+                            <div class="text-center">
+                                <a href="{% url 'password_reset' %}">Forgot password?</a>
+                            </div>
+                            <p class="text-center mt-3">
+                                Don't have an account? <a href="{% url 'account:signup' %}">Sign up</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Client-Side Validation -->
+    <script>
+        (function () {
+            'use strict';
+            const form = document.querySelector('.needs-validation');
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        })();
+    </script>
+
+{% endblock %}

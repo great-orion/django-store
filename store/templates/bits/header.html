@@ -1,0 +1,50 @@
+{% load cart_extras %}
+<header data-bs-theme="dark">
+    <nav class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center">
+            <!-- Logo -->
+            <a href="/" class="navbar-brand">
+                <strong>Store</strong>
+            </a>
+
+            <!-- Search Form -->
+            <form action="{% url 'core:search' %}" method="get" class="position-relative me-auto" style="max-width: 400px;">
+                <input type="text"
+                       name="query"
+                       class="form-control form-control-dark rounded-pill ps-4 pe-5"
+                       placeholder="Search products..."
+                       value="{{ request.GET.query|default:'' }}"
+                       style="background-color: #333; border: none;">
+                <button type="submit" class="btn btn-link position-absolute top-50 end-0 translate-middle-y text-white text-decoration-none pe-3">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+
+            <!-- User Info & Cart -->
+            <div class="d-flex align-items-center gap-3 text-white">
+                {% if user.is_authenticated %}
+                    <!-- Username -->
+                    <span class="d-none d-md-inline">{{ user.username }}</span>
+
+                    <!-- Logout Form -->
+                    <form class="d-inline" action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-light">Logout</button>
+                    </form>
+                {% else %}
+                    <!-- Login Button -->
+                    <a class="btn btn-sm btn-outline-light" href="{% url 'login' %}">Login</a>
+                {% endif %}
+
+                <!-- Cart Icon with Badge -->
+                <a href="{% url 'core:cart_show' %}" class="text-white text-decoration-none position-relative">
+                    <i class="bi bi-cart4 fs-4"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                          id="cart-count">
+                        {{ request.session.cart|dict_values_sum|default:0 }}
+                    </span>
+                </a>
+            </div>
+        </div>
+    </nav>
+</header>

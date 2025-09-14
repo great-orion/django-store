@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load cart_extras %}
+
+{% block title %} Cart {% endblock %}
+
+{% block main %}
+    <div class="container py-5">
+        <h2 class="text-center mb-4 text-primary">🛒 Your Shopping Cart</h2>
+
+        {% if products %}
+            <div class="row">
+                <!-- Cart Items Table -->
+                <div class="col-lg-8 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body p-0">
+                            <table class="table table-borderless table-hover mb-0">
+                                <thead class="table-light">
+                                <tr>
+                                    <th scope="col" class="ps-4">Product</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Discount</th>  <!-- 🔥 New Column -->
+                                    <th scope="col">Qty</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col" class="pe-4">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for product in products %}
+                                    {% with cart|get_item:product.id as quantity %}
+                                        <tr class="align-middle">
+                                            <td class="ps-4">
+                                                <div class="d-flex align-items-center">
+                                                    <!-- Placeholder image -->
+                                                    <div class="bg-secondary rounded me-3"
+                                                         style="width: 50px; height: 50px; background-size: cover; background-position: center;">
+                                                        <i class="bi bi-image text-white d-flex align-items-center justify-content-center h-100"></i>
+                                                    </div>
+                                                    <strong>{{ product.name }}</strong>
+                                                </div>
+                                            </td>
+                                            <td>${{ product.price|floatformat:2 }}</td>
+
+                                            <!-- 🔥 Discount Column -->
+                                            <td>
+                                                {% if product.discount > 0 %}
+                                                    <span class="badge bg-warning text-dark">
+                                                        {{ product.discount|as_percent }} OFF
+                                                    </span>
+                                                {% else %}
+                                                    <span class="text-muted">—</span>
+                                                {% endif %}
+                                            </td>
+
+                                            <td>
+                                                <span class="badge bg-secondary">{{ quantity }}</span>
+                                            </td>
+                                            <td class="text-success fw-bold">
+                                                ${{ product.price|after_discount:product.discount|multiply:quantity|floatformat:2 }}
+                                            </td>
+                                            <td class="pe-4">
+                                                <button type="button"
+                                                        class="btn btn-sm btn-outline-danger remove-item"
+                                                        data-product-id="{{ product.id }}"
+                                                        title="Remove item">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    {% endwith %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0"><i class="bi bi-wallet2"></i> Order Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-group list-group-flush mb-3">
+                                <li class="list-group-item d-flex justify-content-between">
+                                <span>Items (
+                                    {% with cart|length as cart_length %}
+                                        {{ cart_length }}
+                                    {% endwith %}
+                                    )</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between">
+                                    <span>Total Amount</span>
+                                    <strong class="text-success">${{ total|floatformat:2 }}</strong>
+                                </li>
+                            </ul>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <a href="{% url 'core:checkout' %}" class="btn btn-success btn-lg">
+                                    <i class="bi bi-credit-card"></i> Proceed to Checkout
+                                </a>
+                                <a href="{% url 'core:product_list' %}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left"></i> Continue Shopping
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <!-- Empty Cart -->
+            <div class="text-center py-5 bg-white rounded shadow-sm">
+                <i class="bi bi-cart-x text-secondary" style="font-size: 4rem;"></i>
+                <h4 class="text-muted mt-3">Your cart is empty</h4>
+                <p class="text-muted">Add some products to your cart!</p>
+                <a href="{% url 'core:product_list' %}" class="btn btn-primary">
+                    <i class="bi bi-shop-window"></i> Start Shopping
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Handle Remove Item Click
+            $('.remove-item').click(function (e) {
+                e.preventDefault();
+
+                const button = $(this);
+                const productId = button.data('product-id');
+                const url = `{% url 'core:cart_remove' 0 %}`.replace('0', productId);  // Dynamic URL
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    headers: {
+                        'X-CSRFToken': $('input[name=csrfmiddlewaretoken]').first().val()  // Get CSRF
+                    },
+                    success: function (response) {
+                        // Find the table row and remove it
+                        button.closest('tr').fadeOut(300, function () {
+                            $(this).remove();
+
+                            // Update total amount
+                            $('.text-success.fw-bold').first().text('$' + response.total.toFixed(2));
+
+                            // Update order summary total
+                            $('.list-group-item strong.text-success').text('$' + response.total.toFixed(2));
+
+                            // Update cart count badge
+                            $('#cart-count').text(response.cart ? Object.keys(response.cart).length : 0);
+
+                            // If no rows left, show empty cart message
+                            if ($('tbody tr').length === 0) {
+                                $('.card-body').first().html(`
+                            <div class="text-center py-5">
+                                <i class="bi bi-cart-x text-secondary" style="font-size: 4rem;"></i>
+                                <h4 class="text-muted mt-3">Your cart is empty</h4>
+                                <p class="text-muted">Add some products to your cart!</p>
+                                <a href="{% url 'core:product_list' %}" class="btn btn-primary">
+                                    <i class="bi bi-shop-window"></i> Start Shopping
+                                </a>
+                            </div>
+                        `);
+                            }
+                        });
+                    },
+                    error: function () {
+                        alert('Failed to remove item. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

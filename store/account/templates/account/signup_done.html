@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %} Signed up {% endblock %}
+
+{% block contents %}
+
+    <h2 class="mb-3">You're All Set!</h2>
+
+    <!-- Success Message -->
+    <p class="text-muted mb-4">
+        Thank you for signing up, <strong>{{ user.username }}</strong>!
+        Your account has been created successfully.
+    </p>
+
+    <!-- What Happens Next -->
+    <div class="alert alert-info mb-4 text-start">
+        <h6><i class="fas fa-envelope"> Check Your Email</i></h6>
+        <p class="mb-0">
+            We've sent a confirmation email to <strong>{{ user.email }}</strong>.
+            Please click the link in the email to verify your account.
+        </p>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="d-grid gap-3">
+        <a href="{% url 'login' %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-sign-in-alt me-2">Go to Login</i>
+        </a>
+        <a href="/" class="btn btn-outline-secondary btn-lg">
+            <i class="fas fa-home me-2">Back to Home</i>
+        </a>
+    </div>
+{% endblock %}
